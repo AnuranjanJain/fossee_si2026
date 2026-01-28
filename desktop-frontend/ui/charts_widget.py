@@ -1,6 +1,7 @@
 """
 Enhanced Charts Widget for Chemical Equipment Visualizer.
 Includes: Bar charts, Pie charts, Scatter plots, Box plots, Correlation heatmap, and Statistics.
+Supports mouse scroll zoom on correlation and comparison charts.
 """
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QFrame, QScrollArea,
@@ -21,7 +22,9 @@ class ChartsWidget(QWidget):
         super().__init__(parent)
         self.equipment = []
         self.summary = {}
+        self._zoom_connections = []  # Store zoom event connections
         self.setup_ui()
+        self._setup_zoom_handlers()
     
     def setup_ui(self):
         """Setup UI with tabs for different chart categories."""
@@ -164,22 +167,32 @@ class ChartsWidget(QWidget):
     def create_correlation_tab(self):
         """Create correlation analysis tab."""
         widget = QWidget()
-        layout = QHBoxLayout(widget)
-        layout.setSpacing(16)
+        main_layout = QVBoxLayout(widget)
+        main_layout.setSpacing(8)
+        
+        # Zoom hint
+        hint = QLabel("🔍 Scroll to zoom • Double-click to reset")
+        hint.setStyleSheet("color: #606080; font-size: 11px;")
+        main_layout.addWidget(hint)
+        
+        charts_layout = QHBoxLayout()
+        charts_layout.setSpacing(16)
         
         # Scatter plot
         scatter_card, scatter_layout = self.create_card("Temperature vs Flowrate Correlation")
         self.scatter_figure = Figure(figsize=(5, 4), facecolor='#16162a')
         self.scatter_canvas = FigureCanvas(self.scatter_figure)
         scatter_layout.addWidget(self.scatter_canvas)
-        layout.addWidget(scatter_card)
+        charts_layout.addWidget(scatter_card)
         
         # Heatmap
         heatmap_card, heatmap_layout = self.create_card("Parameter Correlation Matrix")
         self.heatmap_figure = Figure(figsize=(4, 4), facecolor='#16162a')
         self.heatmap_canvas = FigureCanvas(self.heatmap_figure)
         heatmap_layout.addWidget(self.heatmap_canvas)
-        layout.addWidget(heatmap_card)
+        charts_layout.addWidget(heatmap_card)
+        
+        main_layout.addLayout(charts_layout)
         
         return widget
     
@@ -208,24 +221,106 @@ class ChartsWidget(QWidget):
     def create_comparison_tab(self):
         """Create equipment comparison tab."""
         widget = QWidget()
-        layout = QHBoxLayout(widget)
-        layout.setSpacing(16)
+        main_layout = QVBoxLayout(widget)
+        main_layout.setSpacing(8)
+        
+        charts_layout = QHBoxLayout()
+        charts_layout.setSpacing(16)
         
         # Radar chart
         radar_card, radar_layout = self.create_card("Top Equipment Multi-Parameter Comparison")
         self.radar_figure = Figure(figsize=(5, 4), facecolor='#16162a')
         self.radar_canvas = FigureCanvas(self.radar_figure)
         radar_layout.addWidget(self.radar_canvas)
-        layout.addWidget(radar_card)
+        charts_layout.addWidget(radar_card)
         
         # Rankings
         rank_card, rank_layout = self.create_card("Equipment Rankings")
         self.rank_figure = Figure(figsize=(4, 4), facecolor='#16162a')
         self.rank_canvas = FigureCanvas(self.rank_figure)
         rank_layout.addWidget(self.rank_canvas)
-        layout.addWidget(rank_card)
+        charts_layout.addWidget(rank_card)
+        
+        main_layout.addLayout(charts_layout)
         
         return widget
+    
+    def _setup_zoom_handlers(self):
+        """Setup mouse scroll zoom for correlation charts only."""
+        # Connect scroll events to zoomable canvases (correlation tab only)
+        zoomable_canvases = [
+            (self.scatter_canvas, self.scatter_figure),
+            (self.heatmap_canvas, self.heatmap_figure),
+        ]
+        
+        for canvas, figure in zoomable_canvases:
+            # Scroll to zoom
+            cid = canvas.mpl_connect('scroll_event', 
+                lambda event, fig=figure, can=canvas: self._on_scroll_zoom(event, fig, can))
+            self._zoom_connections.append((canvas, cid))
+            
+            # Double-click to reset
+            cid2 = canvas.mpl_connect('button_press_event',
+                lambda event, fig=figure, can=canvas: self._on_double_click_reset(event, fig, can))
+            self._zoom_connections.append((canvas, cid2))
+    
+    def _on_double_click_reset(self, event, figure, canvas):
+        """Reset zoom on double-click."""
+        if event.dblclick:
+            for ax in figure.axes:
+                ax.autoscale()
+            figure.tight_layout(pad=1)
+            canvas.draw_idle()
+    
+    def _on_scroll_zoom(self, event, figure, canvas):
+        """Handle mouse scroll for zooming."""
+        if event.inaxes is None:
+            return
+        
+        ax = event.inaxes
+        
+        # Don't zoom polar plots (radar chart) - just return
+        if hasattr(ax, 'name') and ax.name == 'polar':
+            return
+        
+        # Zoom factor
+        base_scale = 1.2
+        
+        if event.button == 'up':
+            scale_factor = 1 / base_scale  # Zoom in
+        elif event.button == 'down':
+            scale_factor = base_scale  # Zoom out
+        else:
+            return
+        
+        # Get current axis limits
+        cur_xlim = ax.get_xlim()
+        cur_ylim = ax.get_ylim()
+        
+        # Get the cursor position
+        xdata = event.xdata
+        ydata = event.ydata
+        
+        # Calculate new limits
+        new_width = (cur_xlim[1] - cur_xlim[0]) * scale_factor
+        new_height = (cur_ylim[1] - cur_ylim[0]) * scale_factor
+        
+        # Calculate relative position of cursor
+        relx = (cur_xlim[1] - xdata) / (cur_xlim[1] - cur_xlim[0])
+        rely = (cur_ylim[1] - ydata) / (cur_ylim[1] - cur_ylim[0])
+        
+        # Set new limits centered on cursor
+        ax.set_xlim([xdata - new_width * (1 - relx), xdata + new_width * relx])
+        ax.set_ylim([ydata - new_height * (1 - rely), ydata + new_height * rely])
+        
+        canvas.draw_idle()
+    
+    def reset_zoom(self, figure, canvas):
+        """Reset zoom to original view."""
+        for ax in figure.axes:
+            ax.autoscale()
+        figure.tight_layout(pad=1)
+        canvas.draw_idle()
     
     def update_data(self, equipment: list, summary: dict):
         """Update all charts with new data."""
@@ -439,7 +534,8 @@ class ChartsWidget(QWidget):
             self.box_canvas.draw()
             return
         
-        labels = list(type_data.keys())
+        # Shorten labels
+        labels = [k[:6] for k in type_data.keys()]
         data = list(type_data.values())
         
         bp = ax.boxplot(data, labels=labels, patch_artist=True)
@@ -447,24 +543,25 @@ class ChartsWidget(QWidget):
         colors = ['#7c3aed', '#8b5cf6', '#059669', '#f59e0b', '#ef4444', '#06b6d4']
         for patch, color in zip(bp['boxes'], colors):
             patch.set_facecolor(color)
-            patch.set_alpha(0.7)
+            patch.set_alpha(0.8)
         
         for element in ['whiskers', 'caps', 'medians']:
             for item in bp[element]:
                 item.set_color('#e0e0e0')
         
-        ax.set_ylabel('Flowrate', color='#8080a0', fontsize=10)
-        ax.tick_params(colors='#606080', labelsize=9)
-        plt.setp(ax.get_xticklabels(), rotation=30, ha='right', color='#8080a0')
+        ax.set_ylabel('Flowrate', color='#a0a0c0', fontsize=9)
+        ax.tick_params(colors='#606080', labelsize=8)
+        plt.setp(ax.get_xticklabels(), rotation=0, ha='center', color='#a0a0c0', fontsize=8)
+        ax.grid(True, alpha=0.1, axis='y', color='#ffffff')
         
         for spine in ax.spines.values():
             spine.set_color('#303050')
         
-        self.box_figure.tight_layout(pad=1)
+        self.box_figure.tight_layout(pad=1.2)
         self.box_canvas.draw()
     
     def draw_histogram(self):
-        """Draw flowrate histogram."""
+        """Draw flowrate histogram with smooth look."""
         self.hist_figure.clear()
         ax = self.hist_figure.add_subplot(111)
         ax.set_facecolor('#16162a')
@@ -477,12 +574,20 @@ class ChartsWidget(QWidget):
         
         flowrates = [float(eq.get('flowrate', 0) or 0) for eq in self.equipment]
         
-        n, bins, patches = ax.hist(flowrates, bins=8, color='#7c3aed', 
-                                   alpha=0.8, edgecolor='#16162a', linewidth=1)
+        # Better binning
+        n_bins = min(10, max(5, len(flowrates) // 2))
+        n, bins, patches = ax.hist(flowrates, bins=n_bins, color='#7c3aed', 
+                                   alpha=0.85, edgecolor='#0f0f1a', linewidth=1.5,
+                                   rwidth=0.85)
+        
+        # Gradient effect on bars
+        for i, patch in enumerate(patches):
+            brightness = 0.7 + (i / len(patches)) * 0.3
+            patch.set_facecolor((0.486 * brightness, 0.227 * brightness, 0.929 * brightness, 0.9))
         
         # Add mean line
         mean_val = np.mean(flowrates)
-        ax.axvline(mean_val, color='#f59e0b', linestyle='--', linewidth=2, label=f'Mean: {mean_val:.1f}')
+        ax.axvline(mean_val, color='#f59e0b', linestyle='--', linewidth=2, label=f'Mean: {mean_val:.0f}')
         
         ax.set_xlabel('Flowrate', color='#8080a0', fontsize=10)
         ax.set_ylabel('Count', color='#8080a0', fontsize=10)
