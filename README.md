@@ -1,95 +1,214 @@
-# Chemical Equipment Parameter Visualizer
+<div align="center">
 
-A hybrid Web + Desktop application for visualizing and analyzing chemical equipment parameters. Upload CSV files containing equipment data and get instant analytics, charts, and PDF reports.
+# ⚗️ Chemical Equipment Parameter Visualizer
 
-![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
-![Django](https://img.shields.io/badge/Django-4.2-green.svg)
-![React](https://img.shields.io/badge/React-18-blue.svg)
-![PyQt5](https://img.shields.io/badge/PyQt5-5.15-orange.svg)
+### *A Powerful Hybrid Web + Desktop Application for Chemical Engineering Analytics*
 
-## Features
+[![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Django](https://img.shields.io/badge/Django-4.2-092E20?style=for-the-badge&logo=django&logoColor=white)](https://djangoproject.com)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+[![PyQt5](https://img.shields.io/badge/PyQt5-5.15-41CD52?style=for-the-badge&logo=qt&logoColor=white)](https://pypi.org/project/PyQt5/)
 
-- **CSV Upload** - Upload equipment data via Web or Desktop interface
-- **Data Analytics** - Automatic calculation of averages, min/max, and distributions
-- **Interactive Charts** - Bar and pie charts using Chart.js (Web) and Matplotlib (Desktop)
-- **History Management** - Keep track of last 5 uploaded datasets
-- **PDF Reports** - Generate and download professional PDF reports
-- **Authentication** - Token-based authentication for secure access
+<img src="https://user-images.githubusercontent.com/placeholder/demo-animation.gif" width="600" alt="Demo Animation">
 
-## Tech Stack
+---
 
-| Layer | Technology | Purpose |
-|-------|------------|---------|
-| Backend | Django + DRF | REST API |
-| Database | SQLite | Data storage |
-| Web Frontend | React + Vite + Chart.js | Web interface |
-| Desktop Frontend | PyQt5 + Matplotlib | Desktop interface |
-| Data Processing | Pandas | CSV parsing & analytics |
-| PDF Generation | ReportLab | Report generation |
+**[📖 Documentation](#-setup-instructions)** · **[🚀 Quick Start](#-quick-start)** · **[📊 Features](#-features)** · **[🔗 API](#-api-endpoints)**
 
-## Project Structure
+</div>
+
+---
+
+## 🎯 What is This?
+
+> Upload CSV files containing chemical equipment parameters and get **instant analytics**, **beautiful charts**, and **professional PDF reports** — all in a sleek dark-themed interface!
+
+<table>
+<tr>
+<td width="50%">
+
+### 🌐 Web Interface
+- Modern React + Vite app
+- Drag-and-drop file upload
+- Interactive Chart.js visualizations
+- Responsive design
+
+</td>
+<td width="50%">
+
+### 🖥️ Desktop Interface
+- Native PyQt5 application
+- Embedded Matplotlib charts
+- 4-tab analytics dashboard
+- Mouse scroll zoom on charts
+
+</td>
+</tr>
+</table>
+
+---
+
+## ✨ Features
+
+<table>
+<tr>
+<td align="center" width="25%">
+<img src="https://img.icons8.com/fluency/96/csv.png" width="48"><br>
+<b>CSV Upload</b><br>
+<sub>Drag & drop or browse</sub>
+</td>
+<td align="center" width="25%">
+<img src="https://img.icons8.com/fluency/96/combo-chart.png" width="48"><br>
+<b>8 Chart Types</b><br>
+<sub>Bar, Pie, Scatter, Box, Radar...</sub>
+</td>
+<td align="center" width="25%">
+<img src="https://img.icons8.com/fluency/96/analytics.png" width="48"><br>
+<b>Live Analytics</b><br>
+<sub>Stats cards & correlations</sub>
+</td>
+<td align="center" width="25%">
+<img src="https://img.icons8.com/fluency/96/pdf.png" width="48"><br>
+<b>PDF Reports</b><br>
+<sub>Download professional reports</sub>
+</td>
+</tr>
+</table>
+
+### 📊 Analytics Dashboard
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  📈 Overview  │  🔗 Correlations  │  📊 Distributions  │  🏆 Compare  │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│   ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐         │
+│   │ 🔧 15    │ │ 💧 120.5 │ │ ⚡ 8.4   │ │ 🌡️ 118°  │         │
+│   │ Equipment│ │ Avg Flow │ │ Max Press│ │ Avg Temp │         │
+│   └──────────┘ └──────────┘ └──────────┘ └──────────┘         │
+│                                                                 │
+│   ┌─────────────────────────┐  ┌──────────────────┐            │
+│   │                         │  │       🥧         │            │
+│   │    📊 Bar Chart         │  │    Pie Chart     │            │
+│   │   Flowrate & Pressure   │  │   Equipment Dist │            │
+│   │                         │  │                  │            │
+│   └─────────────────────────┘  └──────────────────┘            │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🛠️ Tech Stack
+
+<table>
+<tr>
+<th>Layer</th>
+<th>Technology</th>
+<th>Purpose</th>
+</tr>
+<tr>
+<td>🔙 Backend</td>
+<td><img src="https://img.shields.io/badge/Django-092E20?style=flat&logo=django" height="20"> + DRF</td>
+<td>REST API & Auth</td>
+</tr>
+<tr>
+<td>💾 Database</td>
+<td><img src="https://img.shields.io/badge/SQLite-003B57?style=flat&logo=sqlite" height="20"></td>
+<td>Data Storage</td>
+</tr>
+<tr>
+<td>🌐 Web</td>
+<td><img src="https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=black" height="20"> + <img src="https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white" height="20"></td>
+<td>Web Interface</td>
+</tr>
+<tr>
+<td>🖥️ Desktop</td>
+<td><img src="https://img.shields.io/badge/PyQt5-41CD52?style=flat&logo=qt" height="20"> + Matplotlib</td>
+<td>Desktop App</td>
+</tr>
+<tr>
+<td>📊 Charts</td>
+<td><img src="https://img.shields.io/badge/Chart.js-FF6384?style=flat&logo=chartdotjs" height="20"> + Matplotlib</td>
+<td>Data Visualization</td>
+</tr>
+</table>
+
+---
+
+## 📁 Project Structure
 
 ```
 Fossee-2026/
-├── backend/                 # Django REST API
-│   ├── config/             # Django settings
-│   ├── api/                # API app (models, views, serializers)
+├── 🔙 backend/                  # Django REST API
+│   ├── config/                 # Settings & URLs
+│   ├── api/                    # Models, Views, Serializers
 │   └── requirements.txt
-├── web-frontend/           # React Web Application
+│
+├── 🌐 web-frontend/            # React Web Application
 │   ├── src/
-│   │   ├── components/    # React components
-│   │   ├── services/      # API client
+│   │   ├── components/        # UI Components
+│   │   ├── services/          # API Client
 │   │   └── App.jsx
 │   └── package.json
-├── desktop-frontend/       # PyQt5 Desktop Application
-│   ├── ui/                # UI components
-│   ├── services/          # API client
-│   ├── main.py
-│   └── requirements.txt
-└── sample_equipment_data.csv
+│
+├── 🖥️ desktop-frontend/        # PyQt5 Desktop Application
+│   ├── ui/                    # Charts, Login, Main Window
+│   ├── services/              # API Client
+│   └── main.py
+│
+└── 📄 sample_equipment_data.csv
 ```
 
-## Setup Instructions
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Python 3.9+
-- Node.js 18+ and npm
-- Git
+| Requirement | Version |
+|-------------|---------|
+| 🐍 Python | 3.9+ |
+| 📦 Node.js | 18+ |
+| 📂 Git | Latest |
 
-### 1. Clone the Repository
+### ⚡ One-Command Setup
 
 ```bash
-git clone https://github.com/yourusername/Fossee-2026.git
-cd Fossee-2026
+# Clone the repo
+git clone https://github.com/AnuranjanJain/fossee_si2026.git
+cd fossee_si2026
 ```
 
-### 2. Backend Setup
+<details>
+<summary><b>📦 Backend Setup</b></summary>
 
 ```bash
 cd backend
 
-# Create virtual environment (optional but recommended)
+# Create virtual environment
 python -m venv venv
-venv\Scripts\activate  # Windows
+venv\Scripts\activate      # Windows
 # source venv/bin/activate  # Linux/Mac
 
 # Install dependencies
 pip install -r requirements.txt
 
-# Run migrations
+# Setup database
 python manage.py migrate
 
-# Create superuser (for demo: admin/admin123)
+# Create admin user
 python manage.py createsuperuser
 
-# Start server
+# 🚀 Start server
 python manage.py runserver
 ```
 
-The API will be available at `http://localhost:8000/api/`
+> 🌐 API available at `http://localhost:8000/api/`
 
-### 3. Web Frontend Setup
+</details>
+
+<details>
+<summary><b>🌐 Web Frontend Setup</b></summary>
 
 ```bash
 cd web-frontend
@@ -97,13 +216,16 @@ cd web-frontend
 # Install dependencies
 npm install
 
-# Start development server
+# 🚀 Start dev server
 npm run dev
 ```
 
-The web app will be available at `http://localhost:5173/`
+> 🌐 Web app at `http://localhost:5173/`
 
-### 4. Desktop Frontend Setup
+</details>
+
+<details>
+<summary><b>🖥️ Desktop Frontend Setup</b></summary>
 
 ```bash
 cd desktop-frontend
@@ -111,86 +233,100 @@ cd desktop-frontend
 # Install dependencies
 pip install -r requirements.txt
 
-# Run the application
+# 🚀 Launch app
 python main.py
 ```
 
-## Usage
+</details>
 
-### Demo Credentials
-- **Username:** admin
-- **Password:** admin123
+---
 
-### Steps
-1. Start the backend server
-2. Launch either the Web or Desktop frontend
-3. Login with the demo credentials
-4. Upload a CSV file (use `sample_equipment_data.csv` for testing)
-5. View data in the table, charts, and download PDF reports
+## 🔐 Demo Credentials
 
-### Expected CSV Format
+<div align="center">
+
+| Username | Password |
+|:--------:|:--------:|
+| `admin` | `admin123` |
+
+</div>
+
+---
+
+## 📋 CSV Format
 
 ```csv
 Equipment Name,Type,Flowrate,Pressure,Temperature
 Pump-1,Pump,120,5.2,110
 Compressor-1,Compressor,95,8.4,95
 Valve-1,Valve,60,4.1,105
-...
+HeatExchanger-1,HeatExchanger,150,6.2,130
 ```
 
-## API Endpoints
+> 💡 Use `sample_equipment_data.csv` to test!
+
+---
+
+## 🔗 API Endpoints
 
 | Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/auth/login/` | POST | User authentication |
-| `/api/auth/logout/` | POST | User logout |
-| `/api/upload/` | POST | Upload CSV file |
-| `/api/equipment/` | GET | List equipment |
-| `/api/summary/` | GET | Get summary statistics |
-| `/api/history/` | GET | Get upload history |
-| `/api/report/pdf/` | GET | Download PDF report |
+|----------|:------:|-------------|
+| `/api/auth/login/` | `POST` | 🔓 User authentication |
+| `/api/auth/logout/` | `POST` | 🔒 User logout |
+| `/api/upload/` | `POST` | 📤 Upload CSV file |
+| `/api/equipment/` | `GET` | 📋 List equipment |
+| `/api/summary/` | `GET` | 📊 Get statistics |
+| `/api/history/` | `GET` | 📜 Upload history |
+| `/api/report/pdf/` | `GET` | 📄 Download PDF |
 
-## Screenshots
+---
 
-### Web Application
-- Modern dark theme with gradient accents
-- Drag-and-drop file upload
-- Interactive Chart.js visualizations
-- Responsive design
+## 🎨 UI Highlights
 
-### Desktop Application
-- Native PyQt5 interface
-- Embedded Matplotlib charts
-- Tab-based navigation
-- Native file dialogs
+<table>
+<tr>
+<td align="center">
+<b>🌙 Dark Theme</b><br>
+<sub>Easy on the eyes</sub>
+</td>
+<td align="center">
+<b>💜 Purple Accents</b><br>
+<sub>Modern gradient buttons</sub>
+</td>
+<td align="center">
+<b>🔍 Scroll Zoom</b><br>
+<sub>Zoom charts with mouse</sub>
+</td>
+<td align="center">
+<b>✨ Ripple Effects</b><br>
+<sub>Smooth button animations</sub>
+</td>
+</tr>
+</table>
 
-## Development
+---
 
-### Running Tests
+## 🧪 Development
 
 ```bash
-cd backend
-python manage.py test api
+# Run tests
+cd backend && python manage.py test api
+
+# Build for production
+cd web-frontend && npm run build        # Web
+cd desktop-frontend && pyinstaller --onefile main.py  # Desktop
 ```
 
-### Building for Production
+---
 
-**Web:**
-```bash
-cd web-frontend
-npm run build
-```
+## 📜 License
 
-**Desktop:**
-```bash
-cd desktop-frontend
-pyinstaller --onefile main.py
-```
+<div align="center">
 
-## License
+Created for **FOSSEE Intern Screening Task 2026**
 
-This project is created for the FOSSEE Intern Screening Task 2026.
+Made with ❤️ by [AnuranjanJain](https://github.com/AnuranjanJain)
 
-## Author
+[![GitHub](https://img.shields.io/badge/GitHub-AnuranjanJain-181717?style=for-the-badge&logo=github)](https://github.com/AnuranjanJain/fossee_si2026)
 
-Created as part of the FOSSEE Internship application.
+</div>
