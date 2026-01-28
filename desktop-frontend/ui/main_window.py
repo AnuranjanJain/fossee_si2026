@@ -67,11 +67,12 @@ class MainWindow(QMainWindow):
             QTabBar::tab {
                 background-color: #16162a;
                 color: #8080a0;
-                padding: 12px 28px;
+                padding: 12px 24px;
                 margin-right: 6px;
                 border-radius: 8px;
                 font-size: 13px;
                 font-weight: 500;
+                min-width: 100px;
             }
             QTabBar::tab:selected {
                 background-color: #7c3aed;
@@ -142,6 +143,24 @@ class MainWindow(QMainWindow):
             }
             QListWidget::item:hover:!selected {
                 background-color: #1e1e38;
+            }
+            
+            /* Horizontal Scrollbar */
+            QScrollBar:horizontal {
+                background: #16162a;
+                height: 10px;
+                border-radius: 5px;
+            }
+            QScrollBar::handle:horizontal {
+                background: #303050;
+                border-radius: 5px;
+                min-width: 30px;
+            }
+            QScrollBar::handle:horizontal:hover {
+                background: #404060;
+            }
+            QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {
+                width: 0;
             }
             
             /* Scrollbar */
@@ -347,8 +366,15 @@ class MainWindow(QMainWindow):
         self.data_table.setHorizontalHeaderLabels([
             "Equipment Name", "Type", "Flowrate", "Pressure", "Temperature"
         ])
-        self.data_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        # First column stretches, others fit to content
+        header = self.data_table.horizontalHeader()
+        header.setSectionResizeMode(0, QHeaderView.Stretch)
+        header.setSectionResizeMode(1, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(2, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(3, QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(4, QHeaderView.ResizeToContents)
         self.data_table.verticalHeader().setVisible(False)
+        self.data_table.verticalHeader().setDefaultSectionSize(45)  # Row height
         self.data_table.setShowGrid(False)
         layout.addWidget(self.data_table)
         
@@ -381,6 +407,8 @@ class MainWindow(QMainWindow):
         layout.addLayout(header_layout)
         
         self.history_list = QListWidget()
+        self.history_list.setWordWrap(True)
+        self.history_list.setTextElideMode(Qt.ElideNone)
         self.history_list.itemClicked.connect(self.on_history_click)
         layout.addWidget(self.history_list)
         
