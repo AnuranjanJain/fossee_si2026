@@ -1,0 +1,4 @@
+# Desktop Frontend Dependencies
+PyQt5>=5.15
+matplotlib>=3.7
+requests>=2.31
