@@ -9,7 +9,7 @@
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
 [![PyQt5](https://img.shields.io/badge/PyQt5-5.15-41CD52?style=for-the-badge&logo=qt&logoColor=white)](https://pypi.org/project/PyQt5/)
 
-<img src="https://user-images.githubusercontent.com/placeholder/demo-animation.gif" width="600" alt="Demo Animation">
+
 
 ---
 
@@ -75,26 +75,89 @@
 </tr>
 </table>
 
-### 📊 Analytics Dashboard
+### 📸 Screenshots
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  📈 Overview  │  🔗 Correlations  │  📊 Distributions  │  🏆 Compare  │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│   ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐         │
-│   │ 🔧 15    │ │ 💧 120.5 │ │ ⚡ 8.4   │ │ 🌡️ 118°  │         │
-│   │ Equipment│ │ Avg Flow │ │ Max Press│ │ Avg Temp │         │
-│   └──────────┘ └──────────┘ └──────────┘ └──────────┘         │
-│                                                                 │
-│   ┌─────────────────────────┐  ┌──────────────────┐            │
-│   │                         │  │       🥧         │            │
-│   │    📊 Bar Chart         │  │    Pie Chart     │            │
-│   │   Flowrate & Pressure   │  │   Equipment Dist │            │
-│   │                         │  │                  │            │
-│   └─────────────────────────┘  └──────────────────┘            │
-└─────────────────────────────────────────────────────────────────┘
-```
+<table>
+<tr>
+<td align="center">
+<img src="screenshots/login_screen.png" width="250" alt="Login Screen"><br>
+<sub><b>🔐 Login Screen</b></sub>
+</td>
+<td align="center">
+<img src="screenshots/upload_tab.png" width="400" alt="Upload Tab"><br>
+<sub><b>📤 Upload CSV</b></sub>
+</td>
+</tr>
+<tr>
+<td align="center" colspan="2">
+<img src="screenshots/data_dashboard.png" width="700" alt="Data Dashboard"><br>
+<sub><b>📊 Data Dashboard</b></sub>
+</td>
+</tr>
+</table>
+
+#### 📈 Charts & Analytics
+
+<table>
+<tr>
+<td align="center">
+<img src="screenshots/charts_overview.png" width="400" alt="Charts Overview"><br>
+<sub><b>Overview - Bar & Pie Charts</b></sub>
+</td>
+<td align="center">
+<img src="screenshots/charts_correlations.png" width="400" alt="Correlations"><br>
+<sub><b>Correlations - Scatter & Heatmap</b></sub>
+</td>
+</tr>
+<tr>
+<td align="center">
+<img src="screenshots/charts_distributions.png" width="400" alt="Distributions"><br>
+<sub><b>Distributions - Box Plot & Histogram</b></sub>
+</td>
+<td align="center">
+<img src="screenshots/charts_comparison.png" width="400" alt="Comparison"><br>
+<sub><b>Comparison - Radar & Rankings</b></sub>
+</td>
+</tr>
+</table>
+
+---
+
+## ⚡ Performance Optimizations
+
+The desktop application is optimized for **blazing-fast performance**:
+
+<table>
+<tr>
+<td align="center" width="25%">
+🔄<br>
+<b>Async Login</b><br>
+<sub>Non-blocking authentication</sub>
+</td>
+<td align="center" width="25%">
+📊<br>
+<b>Lazy Chart Rendering</b><br>
+<sub>Only renders visible charts</sub>
+</td>
+<td align="center" width="25%">
+🔌<br>
+<b>Connection Pooling</b><br>
+<sub>Reuses TCP connections</sub>
+</td>
+<td align="center" width="25%">
+⏱️<br>
+<b>Request Timeouts</b><br>
+<sub>Prevents UI hanging</sub>
+</td>
+</tr>
+</table>
+
+**Key Optimizations:**
+- 🚀 **Background Threading** — All API calls run in separate threads, keeping the UI responsive
+- 📈 **Lazy Loading** — Charts are rendered only when their tab is selected (reduces initial load by ~75%)
+- 🔗 **Connection Reuse** — HTTP session pooling for faster subsequent requests
+- ⏳ **Loading Indicators** — Visual feedback during data fetching operations
+- 🎯 **Smart Updates** — Only re-renders components that have changed data
 
 ---
 
