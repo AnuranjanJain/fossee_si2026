@@ -5,8 +5,27 @@ from PyQt5.QtWidgets import (
     QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QFrame,
     QGraphicsDropShadowEffect
 )
-from PyQt5.QtCore import Qt, QPropertyAnimation, QPoint, QEasingCurve, QTimer, pyqtProperty
+from PyQt5.QtCore import Qt, QPropertyAnimation, QPoint, QEasingCurve, QTimer, pyqtProperty, QThread, pyqtSignal
 from PyQt5.QtGui import QFont, QPainter, QColor, QRadialGradient, QBrush
+
+
+class LoginThread(QThread):
+    """Background thread for login to prevent UI blocking."""
+    success = pyqtSignal(dict)
+    error = pyqtSignal(str)
+    
+    def __init__(self, api_client, username, password):
+        super().__init__()
+        self.api_client = api_client
+        self.username = username
+        self.password = password
+    
+    def run(self):
+        try:
+            data = self.api_client.login(self.username, self.password)
+            self.success.emit(data)
+        except Exception as e:
+            self.error.emit(str(e))
 
 
 class GlassRippleButton(QPushButton):
@@ -230,7 +249,7 @@ class LoginDialog(QDialog):
         self.username.returnPressed.connect(self.password.setFocus)
     
     def handle_login(self):
-        """Handle login."""
+        """Handle login using background thread."""
         username = self.username.text().strip()
         password = self.password.text().strip()
         
@@ -238,13 +257,27 @@ class LoginDialog(QDialog):
             QMessageBox.warning(self, "Error", "Enter username and password")
             return
         
-        try:
-            self.login_btn.setText("Signing in...")
-            self.login_btn.setEnabled(False)
-            self.user_data = self.api_client.login(username, password)
-            self.accept()
-        except:
-            QMessageBox.critical(self, "Error", "Invalid credentials")
-        finally:
-            self.login_btn.setText("Sign In")
-            self.login_btn.setEnabled(True)
+        self.login_btn.setText("Signing in...")
+        self.login_btn.setEnabled(False)
+        self.username.setEnabled(False)
+        self.password.setEnabled(False)
+        
+        # Use background thread for login
+        self.login_thread = LoginThread(self.api_client, username, password)
+        self.login_thread.success.connect(self._on_login_success)
+        self.login_thread.error.connect(self._on_login_error)
+        self.login_thread.start()
+    
+    def _on_login_success(self, data):
+        """Handle successful login."""
+        self.user_data = data
+        self.accept()
+    
+    def _on_login_error(self, error_msg):
+        """Handle login error."""
+        QMessageBox.critical(self, "Error", "Invalid credentials")
+        self.login_btn.setText("Sign In")
+        self.login_btn.setEnabled(True)
+        self.username.setEnabled(True)
+        self.password.setEnabled(True)
+

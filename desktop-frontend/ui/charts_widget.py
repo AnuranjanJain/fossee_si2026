@@ -23,8 +23,12 @@ class ChartsWidget(QWidget):
         self.equipment = []
         self.summary = {}
         self._zoom_connections = []  # Store zoom event connections
+        self._tabs_rendered = [False, False, False, False]  # Track which tabs have been rendered
+        self._data_pending = False  # Track if data update is pending
         self.setup_ui()
         self._setup_zoom_handlers()
+        # Connect tab change for lazy loading
+        self.tabs.currentChanged.connect(self._on_tab_changed)
     
     def setup_ui(self):
         """Setup UI with tabs for different chart categories."""
@@ -323,19 +327,49 @@ class ChartsWidget(QWidget):
         canvas.draw_idle()
     
     def update_data(self, equipment: list, summary: dict):
-        """Update all charts with new data."""
+        """Update charts with new data using lazy loading."""
         self.equipment = equipment
         self.summary = summary
         
+        # Reset rendered state
+        self._tabs_rendered = [False, False, False, False]
+        self._data_pending = True
+        
+        # Always update stats immediately (they're lightweight)
         self.update_stats()
-        self.draw_bar()
-        self.draw_pie()
-        self.draw_scatter()
-        self.draw_heatmap()
-        self.draw_boxplot()
-        self.draw_histogram()
-        self.draw_radar()
-        self.draw_rankings()
+        
+        # Only render the current visible tab immediately
+        self._render_current_tab()
+    
+    def _on_tab_changed(self, index):
+        """Handle tab change - render if not yet rendered."""
+        if self._data_pending and not self._tabs_rendered[index]:
+            self._render_tab(index)
+    
+    def _render_current_tab(self):
+        """Render charts for the current tab."""
+        current_idx = self.tabs.currentIndex()
+        self._render_tab(current_idx)
+    
+    def _render_tab(self, index):
+        """Render charts for a specific tab."""
+        if self._tabs_rendered[index]:
+            return
+        
+        self._tabs_rendered[index] = True
+        
+        if index == 0:  # Overview
+            self.draw_bar()
+            self.draw_pie()
+        elif index == 1:  # Correlations
+            self.draw_scatter()
+            self.draw_heatmap()
+        elif index == 2:  # Distributions
+            self.draw_boxplot()
+            self.draw_histogram()
+        elif index == 3:  # Comparison
+            self.draw_radar()
+            self.draw_rankings()
     
     def update_stats(self):
         """Update statistics cards."""

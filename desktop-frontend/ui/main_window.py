@@ -4,9 +4,10 @@ Polished Main Window for Chemical Equipment Visualizer.
 from PyQt5.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QTabWidget,
     QLabel, QPushButton, QTableWidget, QTableWidgetItem, QFileDialog,
-    QMessageBox, QFrame, QListWidget, QListWidgetItem, QHeaderView, QSplitter
+    QMessageBox, QFrame, QListWidget, QListWidgetItem, QHeaderView, QSplitter,
+    QApplication
 )
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, QTimer
 from PyQt5.QtGui import QFont, QColor
 
 from .charts_widget import ChartsWidget
@@ -27,6 +28,23 @@ class DataLoaderThread(QThread):
             equipment = self.api_client.get_equipment(self.session_id)
             summary = self.api_client.get_summary(self.session_id)
             self.finished.emit(equipment, summary)
+        except Exception as e:
+            self.error.emit(str(e))
+
+
+class HistoryLoaderThread(QThread):
+    """Background thread for loading upload history."""
+    finished = pyqtSignal(list)
+    error = pyqtSignal(str)
+    
+    def __init__(self, api_client):
+        super().__init__()
+        self.api_client = api_client
+    
+    def run(self):
+        try:
+            history = self.api_client.get_history()
+            self.finished.emit(history)
         except Exception as e:
             self.error.emit(str(e))
 
@@ -199,6 +217,51 @@ class MainWindow(QMainWindow):
         self.tabs.addTab(self.create_charts_tab(), "📈 Charts")
         self.tabs.addTab(self.create_history_tab(), "📜 History")
         layout.addWidget(self.tabs)
+        
+        # Loading overlay (initially hidden)
+        self._create_loading_overlay()
+    
+    def _create_loading_overlay(self):
+        """Create a loading overlay widget."""
+        self.loading_overlay = QFrame(self)
+        self.loading_overlay.setStyleSheet("""
+            QFrame {
+                background-color: rgba(15, 15, 26, 200);
+                border-radius: 12px;
+            }
+        """)
+        self.loading_overlay.setVisible(False)
+        
+        overlay_layout = QVBoxLayout(self.loading_overlay)
+        overlay_layout.setAlignment(Qt.AlignCenter)
+        
+        loading_icon = QLabel("⏳")
+        loading_icon.setFont(QFont("Segoe UI Emoji", 48))
+        loading_icon.setAlignment(Qt.AlignCenter)
+        overlay_layout.addWidget(loading_icon)
+        
+        self.loading_label = QLabel("Loading data...")
+        self.loading_label.setAlignment(Qt.AlignCenter)
+        self.loading_label.setStyleSheet("color: #a78bfa; font-size: 16px; font-weight: 500;")
+        overlay_layout.addWidget(self.loading_label)
+    
+    def resizeEvent(self, event):
+        """Handle resize to keep loading overlay sized correctly."""
+        super().resizeEvent(event)
+        if hasattr(self, 'loading_overlay'):
+            self.loading_overlay.setGeometry(self.rect())
+    
+    def _show_loading(self, message="Loading data..."):
+        """Show loading overlay."""
+        self.loading_label.setText(message)
+        self.loading_overlay.setGeometry(self.rect())
+        self.loading_overlay.raise_()
+        self.loading_overlay.setVisible(True)
+        QApplication.processEvents()
+    
+    def _hide_loading(self):
+        """Hide loading overlay."""
+        self.loading_overlay.setVisible(False)
     
     def create_header(self):
         """Create header."""
@@ -415,18 +478,24 @@ class MainWindow(QMainWindow):
         return tab
     
     def load_data(self, session_id=None):
-        """Load data."""
+        """Load data with loading indicator."""
+        self._show_loading("Loading data...")
         self.loader = DataLoaderThread(self.api_client, session_id)
         self.loader.finished.connect(self.on_data_loaded)
-        self.loader.error.connect(lambda e: None)
+        self.loader.error.connect(self._on_data_error)
         self.loader.start()
         self.load_history()
     
+    def _on_data_error(self, error):
+        """Handle data loading error."""
+        self._hide_loading()
+    
     def on_data_loaded(self, equipment, summary):
-        """Handle data."""
+        """Handle data loaded."""
         self.equipment = equipment
         self.summary = summary
         self.update_ui()
+        self._hide_loading()
     
     def update_ui(self):
         """Update UI."""
@@ -452,18 +521,28 @@ class MainWindow(QMainWindow):
         self.charts_widget.update_data(self.equipment, self.summary)
     
     def load_history(self):
-        """Load history."""
-        try:
-            history = self.api_client.get_history()
-            self.history_list.clear()
-            for s in history:
-                date = s.get('uploaded_at', '')[:10]
-                count = s.get('equipment_count', 0)
-                item = QListWidgetItem(f"📄 {s['filename']}    •    {date}    •    {count} records")
-                item.setData(Qt.UserRole, s['id'])
-                self.history_list.addItem(item)
-        except:
-            pass
+        """Load history asynchronously."""
+        # Show loading indicator
+        self.history_list.clear()
+        loading_item = QListWidgetItem("⏳ Loading history...")
+        loading_item.setFlags(loading_item.flags() & ~Qt.ItemIsSelectable)
+        self.history_list.addItem(loading_item)
+        
+        # Use background thread
+        self.history_loader = HistoryLoaderThread(self.api_client)
+        self.history_loader.finished.connect(self._on_history_loaded)
+        self.history_loader.error.connect(lambda e: None)
+        self.history_loader.start()
+    
+    def _on_history_loaded(self, history):
+        """Handle history data loaded."""
+        self.history_list.clear()
+        for s in history:
+            date = s.get('uploaded_at', '')[:10]
+            count = s.get('equipment_count', 0)
+            item = QListWidgetItem(f"📄 {s['filename']}    •    {date}    •    {count} records")
+            item.setData(Qt.UserRole, s['id'])
+            self.history_list.addItem(item)
     
     def on_history_click(self, item):
         """Handle history click."""

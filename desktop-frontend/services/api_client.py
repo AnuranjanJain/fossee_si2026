@@ -1,8 +1,13 @@
 """
 API Client for Chemical Equipment Visualizer Desktop App.
+Uses connection pooling and timeouts for better performance.
 """
 import requests
 from typing import Optional, Dict, Any, List
+
+
+# Default timeout for API requests (connect, read)
+DEFAULT_TIMEOUT = (3.0, 10.0)
 
 
 class APIClient:
@@ -11,6 +16,8 @@ class APIClient:
     def __init__(self, base_url: str = "http://localhost:8000/api"):
         self.base_url = base_url
         self.token: Optional[str] = None
+        # Use Session for connection pooling (reuses TCP connections)
+        self.session = requests.Session()
     
     def _headers(self) -> Dict[str, str]:
         """Get request headers with auth token."""
@@ -21,9 +28,10 @@ class APIClient:
     
     def login(self, username: str, password: str) -> Dict[str, Any]:
         """Authenticate user and store token."""
-        response = requests.post(
+        response = self.session.post(
             f"{self.base_url}/auth/login/",
-            json={"username": username, "password": password}
+            json={"username": username, "password": password},
+            timeout=DEFAULT_TIMEOUT
         )
         response.raise_for_status()
         data = response.json()
@@ -33,9 +41,10 @@ class APIClient:
     def logout(self) -> None:
         """Logout and clear token."""
         try:
-            requests.post(
+            self.session.post(
                 f"{self.base_url}/auth/logout/",
-                headers=self._headers()
+                headers=self._headers(),
+                timeout=DEFAULT_TIMEOUT
             )
         except:
             pass
@@ -48,10 +57,11 @@ class APIClient:
             headers["Authorization"] = f"Token {self.token}"
         
         with open(file_path, 'rb') as f:
-            response = requests.post(
+            response = self.session.post(
                 f"{self.base_url}/upload/",
                 files={"file": f},
-                headers=headers
+                headers=headers,
+                timeout=(3.0, 30.0)  # Longer timeout for file upload
             )
         response.raise_for_status()
         return response.json()
@@ -62,10 +72,11 @@ class APIClient:
         if session_id:
             params["session_id"] = session_id
         
-        response = requests.get(
+        response = self.session.get(
             f"{self.base_url}/equipment/",
             headers=self._headers(),
-            params=params
+            params=params,
+            timeout=DEFAULT_TIMEOUT
         )
         response.raise_for_status()
         return response.json()
@@ -76,19 +87,21 @@ class APIClient:
         if session_id:
             params["session_id"] = session_id
         
-        response = requests.get(
+        response = self.session.get(
             f"{self.base_url}/summary/",
             headers=self._headers(),
-            params=params
+            params=params,
+            timeout=DEFAULT_TIMEOUT
         )
         response.raise_for_status()
         return response.json()
     
     def get_history(self) -> List[Dict[str, Any]]:
         """Get upload history."""
-        response = requests.get(
+        response = self.session.get(
             f"{self.base_url}/history/",
-            headers=self._headers()
+            headers=self._headers(),
+            timeout=DEFAULT_TIMEOUT
         )
         response.raise_for_status()
         return response.json()
@@ -99,10 +112,11 @@ class APIClient:
         if session_id:
             params["session_id"] = session_id
         
-        response = requests.get(
+        response = self.session.get(
             f"{self.base_url}/report/pdf/",
             headers=self._headers(),
-            params=params
+            params=params,
+            timeout=(3.0, 30.0)  # Longer timeout for PDF generation
         )
         response.raise_for_status()
         return response.content
