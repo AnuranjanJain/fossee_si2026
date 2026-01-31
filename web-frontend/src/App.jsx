@@ -168,10 +168,7 @@ function App() {
                         )}
 
                         {activeTab === 'charts' && (
-                            <>
-                                <Summary summary={summary} />
-                                <Charts equipment={equipment} summary={summary} />
-                            </>
+                            <Charts equipment={equipment} summary={summary} />
                         )}
 
                         {activeTab === 'history' && (
