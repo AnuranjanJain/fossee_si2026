@@ -38,6 +38,16 @@ export const login = async (username, password) => {
     return response.data;
 };
 
+export const register = async (username, email, password, confirmPassword) => {
+    const response = await api.post('/auth/register/', {
+        username,
+        email,
+        password,
+        confirm_password: confirmPassword
+    });
+    return response.data;
+};
+
 export const logout = async () => {
     await api.post('/auth/logout/');
     localStorage.removeItem('authToken');

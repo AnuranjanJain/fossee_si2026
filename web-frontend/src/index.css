@@ -270,7 +270,7 @@ body {
   color: var(--text-muted);
 }
 
-/* Login Page */
+/* Login Page with Sliding Animation */
 .login-container {
   min-height: 100vh;
   display: flex;
@@ -278,6 +278,47 @@ body {
   justify-content: center;
   background: var(--bg-primary);
   padding: var(--space-xl);
+  overflow: hidden;
+}
+
+.auth-slider {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  position: relative;
+  transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.auth-panel {
+  min-width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.auth-slider.signup-mode {
+  transform: translateX(-100%);
+}
+
+.login-panel {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.signup-panel {
+  opacity: 0.5;
+  transform: scale(0.95);
+}
+
+.auth-slider.signup-mode .login-panel {
+  opacity: 0.5;
+  transform: scale(0.95);
+}
+
+.auth-slider.signup-mode .signup-panel {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .login-card {
@@ -288,11 +329,12 @@ body {
   border-radius: var(--radius-2xl);
   padding: var(--space-2xl);
   backdrop-filter: blur(20px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 .login-header {
   text-align: center;
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-xl);
 }
 
 .login-title {
@@ -316,7 +358,13 @@ body {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
+}
+
+.form-group label {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .form-label {
@@ -335,7 +383,50 @@ body {
   color: var(--accent-rose);
   font-size: 0.875rem;
   text-align: center;
+  padding: var(--space-sm);
+  background: rgba(244, 63, 94, 0.1);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.auth-switch {
+  text-align: center;
+  margin-top: var(--space-lg);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--accent-blue);
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: var(--space-xs);
+  transition: color var(--transition-fast);
+}
+
+.link-btn:hover {
+  color: var(--accent-purple);
+  text-decoration: underline;
+}
+
+.demo-credentials {
+  text-align: center;
   margin-top: var(--space-md);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+/* Responsive for auth slider */
+@media (max-width: 480px) {
+  .login-card {
+    padding: var(--space-lg);
+  }
+
+  .login-title {
+    font-size: 1.25rem;
+  }
 }
 
 /* File Upload */

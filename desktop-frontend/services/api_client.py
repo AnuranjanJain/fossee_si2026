@@ -38,6 +38,23 @@ class APIClient:
         self.token = data.get("token")
         return data
     
+    def register(self, username: str, email: str, password: str, confirm_password: str) -> Dict[str, Any]:
+        """Register a new user."""
+        response = self.session.post(
+            f"{self.base_url}/auth/register/",
+            json={
+                "username": username,
+                "email": email,
+                "password": password,
+                "confirm_password": confirm_password
+            },
+            timeout=DEFAULT_TIMEOUT
+        )
+        response.raise_for_status()
+        data = response.json()
+        self.token = data.get("token")
+        return data
+    
     def logout(self) -> None:
         """Logout and clear token."""
         try:
