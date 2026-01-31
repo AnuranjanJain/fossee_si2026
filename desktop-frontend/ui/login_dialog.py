@@ -106,6 +106,10 @@ class LoginDialog(QDialog):
         super().__init__(parent)
         self.api_client = api_client
         self.user_data = None
+        
+        # Enable translucent background
+        self.setAttribute(Qt.WA_TranslucentBackground, True)
+        
         self.setup_ui()
     
     def setup_ui(self):
@@ -115,20 +119,21 @@ class LoginDialog(QDialog):
         
         self.setStyleSheet("""
             QDialog {
-                background-color: #0f0f1a;
+                background-color: rgba(15, 15, 26, 220);
+                border-radius: 16px;
             }
             QFrame#card {
-                background-color: #16162a;
+                background-color: rgba(22, 22, 42, 230);
                 border-radius: 16px;
                 border: 1px solid #252545;
             }
             QLabel {
                 color: #e0e0e0;
-                background: transparent;
+                background: rgba(22, 22, 42, 100);
             }
             QLineEdit {
                 padding: 14px 16px;
-                background-color: #1e1e38;
+                background-color: rgba(30, 30, 56, 230);
                 border: 1px solid #303055;
                 border-radius: 10px;
                 color: #ffffff;

@@ -30,8 +30,10 @@
 ### 🌐 Web Interface
 - Modern React + Vite app
 - Drag-and-drop file upload
-- Interactive Chart.js visualizations
-- Responsive design
+- **4-tab analytics dashboard**
+- **8 interactive Chart.js visualizations**
+- Real-time statistics cards
+- Responsive dark-themed design
 
 </td>
 <td width="50%">
@@ -75,7 +77,18 @@
 </tr>
 </table>
 
-### 📸 Screenshots
+### � Chart Analytics (4 Tabs)
+
+Both web and desktop apps feature an advanced **4-tab analytics dashboard**:
+
+| Tab | Charts | Description |
+|-----|--------|-------------|
+| 📊 **Overview** | Bar + Pie | Flowrate/Pressure comparison & Type distribution |
+| 🔗 **Correlations** | Scatter + Heatmap | Parameter relationships & correlation matrix |
+| 📈 **Distributions** | Box Plot + Histogram | Statistical distributions by equipment type |
+| 🏆 **Comparison** | Radar + Rankings | Multi-axis comparison & top performers |
+
+### �📸 Screenshots
 
 <table>
 <tr>
@@ -125,7 +138,7 @@
 
 ## ⚡ Performance Optimizations
 
-The desktop application is optimized for **blazing-fast performance**:
+Both web and desktop applications are optimized for **blazing-fast performance**:
 
 <table>
 <tr>

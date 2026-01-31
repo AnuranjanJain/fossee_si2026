@@ -58,6 +58,10 @@ class MainWindow(QMainWindow):
         self.equipment = []
         self.summary = {}
         self.current_session_id = None
+        
+        # Enable translucent background
+        self.setAttribute(Qt.WA_TranslucentBackground, True)
+        
         self.setup_ui()
         self.load_data()
     
@@ -66,13 +70,16 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Chemical Equipment Visualizer")
         self.setMinimumSize(1280, 850)
         
-        # Modern dark theme with purple accents
+        # Modern dark theme with purple accents and translucency
         self.setStyleSheet("""
             QMainWindow {
-                background-color: #0f0f1a;
+                background-color: rgba(15, 15, 26, 230);
             }
             QWidget {
                 background-color: transparent;
+                color: #e0e0e0;
+                font-family: 'Segoe UI', sans-serif;
+            }
                 color: #e0e0e0;
                 font-family: 'Segoe UI', sans-serif;
             }
@@ -83,7 +90,7 @@ class MainWindow(QMainWindow):
                 background-color: transparent;
             }
             QTabBar::tab {
-                background-color: #16162a;
+                background-color: rgba(22, 22, 42, 200);
                 color: #8080a0;
                 padding: 12px 24px;
                 margin-right: 6px;
@@ -103,7 +110,7 @@ class MainWindow(QMainWindow):
             
             /* Tables */
             QTableWidget {
-                background-color: #16162a;
+                background-color: rgba(22, 22, 42, 220);
                 border: 1px solid #252545;
                 border-radius: 10px;
                 gridline-color: #252545;
@@ -117,7 +124,7 @@ class MainWindow(QMainWindow):
                 background-color: #7c3aed;
             }
             QHeaderView::section {
-                background-color: #1e1e38;
+                background-color: rgba(30, 30, 56, 220);
                 color: #8080a0;
                 padding: 12px;
                 border: none;
@@ -148,7 +155,7 @@ class MainWindow(QMainWindow):
             
             /* List */
             QListWidget {
-                background-color: #16162a;
+                background-color: rgba(22, 22, 42, 220);
                 border: 1px solid #252545;
                 border-radius: 10px;
             }
@@ -165,7 +172,7 @@ class MainWindow(QMainWindow):
             
             /* Horizontal Scrollbar */
             QScrollBar:horizontal {
-                background: #16162a;
+                background: rgba(22, 22, 42, 180);
                 height: 10px;
                 border-radius: 5px;
             }
@@ -183,7 +190,7 @@ class MainWindow(QMainWindow):
             
             /* Scrollbar */
             QScrollBar:vertical {
-                background: #16162a;
+                background: rgba(22, 22, 42, 180);
                 width: 10px;
                 border-radius: 5px;
             }
@@ -268,7 +275,7 @@ class MainWindow(QMainWindow):
         header = QFrame()
         header.setStyleSheet("""
             QFrame {
-                background-color: #16162a;
+                background-color: rgba(22, 22, 42, 220);
                 border-radius: 12px;
                 border: 1px solid #252545;
             }

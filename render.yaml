@@ -1,0 +1,42 @@
+# ==============================================
+# Render.com Blueprint - Single URL Deployment
+# Chemical Equipment Parameter Visualizer
+# ==============================================
+#
+# This configuration deploys both the React frontend
+# and Django backend as a single web service.
+#
+# Deploy: New > Blueprint > Connect this repo
+# ==============================================
+
+services:
+  - type: web
+    name: chemical-equipment-visualizer
+    runtime: python
+    plan: free
+    buildCommand: |
+      # Build React frontend
+      cd web-frontend && npm install && npm run build &&
+      # Copy build files to Django
+      mkdir -p ../backend/frontend/assets &&
+      cp dist/index.html ../backend/frontend/ &&
+      cp dist/assets/* ../backend/frontend/assets/ &&
+      # Fix asset paths for Django static
+      sed -i 's|/assets/|/static/|g' ../backend/frontend/index.html &&
+      # Setup Django
+      cd ../backend &&
+      pip install -r requirements.txt &&
+      python manage.py collectstatic --noinput &&
+      python manage.py migrate
+    startCommand: cd backend && gunicorn config.wsgi:application
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: PYTHON_VERSION
+        value: "3.11.7"
+      - key: NODE_VERSION
+        value: "20"
