@@ -283,42 +283,42 @@ body {
 
 .auth-slider {
   width: 100%;
-  max-width: 900px;
-  display: flex;
+  max-width: 420px;
+  overflow: hidden;
   position: relative;
-  transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .auth-panel {
-  min-width: 100%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-
-.auth-slider.signup-mode {
-  transform: translateX(-100%);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
 }
 
 .login-panel {
+  position: relative;
+  transform: translateX(0);
   opacity: 1;
-  transform: scale(1);
 }
 
 .signup-panel {
-  opacity: 0.5;
-  transform: scale(0.95);
+  transform: translateX(100%);
+  opacity: 0;
 }
 
+/* Signup mode - slide login left, slide signup in from right */
 .auth-slider.signup-mode .login-panel {
-  opacity: 0.5;
-  transform: scale(0.95);
+  transform: translateX(-100%);
+  opacity: 0;
 }
 
 .auth-slider.signup-mode .signup-panel {
+  transform: translateX(0);
   opacity: 1;
-  transform: scale(1);
 }
 
 .login-card {
